@@ -1,0 +1,963 @@
+<!doctype html>
+<html>
+<!-- Libreria de jquery -->
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<head>
+<!-- Declaracion de los estilos -->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<center>
+<form id="form">
+	<div>
+    <table>
+    <!-- Input de la quintupla de lenguaje -->
+    <tr><td> Estados </td><td><select id="estados"><option value="1">P</option><option value="2">P,Q</option><option value="3">P,Q,R</option><option value="4">P,Q,R,S</option><option value="5">P,Q,R,S,T</option></select></td><td></td> 
+
+    <td> Simbolos </td><td> <input type="text" name="simbolos" id="simbolos" placeholder="a b c 1 0"/></td> </tr><tr></tr>
+
+    <td> Estado Inicial </td><td><input type="text" name="inicial" id="inicial" placeholder="P Q <= Estados"/></td><td></td> <td> Estado Final </td><td><input type="text" name="final" id="final" placeholder="Q R o <= Estados"/></td></tr><tr></tr>
+    </table>
+    <br>
+    Funciones <br>
+    <input name="funcion" id="funcion" placeholder="{ P a b 1 0 R } 1 por Go! "/> <br><br>
+    
+    <!-- Seleccion entre AFN y AFD -->
+    *No funciona adecuadamente, se incluyen transiciones para tomar los puntos de este paso. * <br>
+    AFN <input type="radio"/> &emsp; <input type="radio"/> AFD
+    <br><br>
+    <!-- dibujare aqui las transiciones por medio de javascript -->
+    Transiciones <br>
+    <textarea id="textarea1" rows="8" cols="30"></textarea><br>
+
+    <table><tr></tr>
+    <!-- Input de la cadena a analizar-->
+    <tr><td> Teclea tu cadena </td><td><input type="text" name="cadena" id="cadena" placeholder="1 1 0 + 1 simbolo extra" /></td></tr>
+    <tr></tr><tr></tr>
+    </table>
+  
+    <button type="submit">Go</button><br><br>
+    <INPUT TYPE="button" onClick="history.go(0)" VALUE="Refresh">
+    </div>
+</form>
+
+    <br>
+    <!-- Canvas donde se dibujaran los graficos utilizando javascript -->
+	<canvas id="myCanvas" width="1000" height="200" style="border:1px solid #d3d3d3;"></canvas>
+
+<!-- -------------------------------------------------------------- -->
+	<script>
+	$(function() { //shorthand document.ready function
+	    $('#form').on('submit', function(e) { //use on if jQuery
+	    	var estados = 0;
+	        e.preventDefault();  //prevent form from submitting
+	        var data = $("#form :input").serializeArray();
+	        // subdivision arreglo de datos de los inout
+	        var init = data[1].value.split(" ");
+	        var fin = data[2].value.split(" ");
+	        var fun = data[3].value.split(" ");
+	        var chain = data[4].value.split(" ");
+	        estados = document.getElementById('estados').value;
+	        
+	        // use the console for debugging, F12 in Chrome, not alerts
+	        // console.log(data);
+	        // console.log(fun);
+	        // console.log(chain);
+
+	        // valores para determinar cadena, inicial, final, lectura de funciones
+	        var funcissalida = [];
+	        var funcisentrada = [];
+
+	        var e1i = fun.indexOf("{");
+	        var e1f = fun.indexOf("}");
+
+	       	var transiciones = [];
+	       	transiciones.push(data[3].value);
+	       	// document.getElementById('trans').value = data[3].value;
+
+	        funcissalida.push(fun[e1i+1]); 
+	        funcisentrada.push(fun[e1f-1]);
+	        var numeros = (e1f-2)-(e1i+1) + 1;
+
+	        // simbolos de estado/transicion
+	        var simbiosis = [];
+
+	        for(var i = e1i+2; i <= numeros; i++){
+	        simbiosis.push(fun[i]);
+	    	}
+	    	var simb = simbiosis;
+	        // console.log(funcissalida);
+	        // console.log(funcisentrada);
+	        // console.log(transiciones);
+
+	        // escribe transiciones en textarea
+	        for (index = 0; index < simb.length; ++index) {
+			var obj=document.getElementById("textarea1");
+			obj.value+=funcissalida+funcisentrada+simb[index]+"\r\n";
+			}
+
+			var stringArray = document.getElementById('textarea1').value.split('\n');
+			var actual = init;
+			var valortot = 0;
+
+
+			// ciclo de revision de la cadena probando que el estado actual sea =
+			for (index2 = 0; index2 < chain.length; ++index2) {
+				
+				if (actual == "P"){
+					if (stringArray.indexOf("PP"+chain[index2]) > -1){
+						actual = "P";
+						valortot++;
+					}
+        			if (stringArray.indexOf("PQ"+chain[index2]) > -1){
+						actual = "Q";
+						valortot++;
+					}
+					if(stringArray.indexOf("PR"+chain[index2]) > -1){
+						actual = "R";
+						valortot++;
+					}
+					if(stringArray.indexOf("PS"+chain[index2]) > -1){
+						actual = "S";
+						valortot++;
+					}
+					if(stringArray.indexOf("PT"+chain[index2]) > -1){
+						actual = "T";
+						valortot++;
+					}
+
+				}
+
+				if (actual == "Q"){
+					if (stringArray.indexOf("QQ"+chain[index2]) > -1){
+						actual = "Q";
+						valortot++;
+					}
+					if(stringArray.indexOf("QP"+chain[index2]) > -1){
+						actual = "P";
+						valortot++;
+					}
+					if(stringArray.indexOf("QR"+chain[index2]) > -1){
+						actual = "R";
+						valortot++;
+					}
+					if(stringArray.indexOf("QS"+chain[index2]) > -1){
+						actual = "S";
+						valortot++;
+					}
+					if(stringArray.indexOf("QT"+chain[index2]) > -1){
+						actual = "T";
+						valortot++;
+					}
+				}
+
+				if (actual == "R"){
+					if (stringArray.indexOf("RR"+chain[index2]) > -1){
+						actual = "R";
+						valortot++;
+					}
+					if(stringArray.indexOf("RP"+chain[index2]) > -1){
+						actual = "P";
+						valortot++;
+					}
+					if(stringArray.indexOf("RQ"+chain[index2]) > -1){
+						actual = "Q";
+						valortot++;
+					}
+					if(stringArray.indexOf("RS"+chain[index2]) > -1){
+						actual = "S";
+						valortot++;
+					}
+					if(stringArray.indexOf("RT"+chain[index2]) > -1){
+						actual = "T";
+						valortot++;
+					}
+				}
+
+				if (actual == "S"){
+					if (stringArray.indexOf("SS"+chain[index2]) > -1){
+						actual = "S";
+						valortot++;
+					}
+					if(stringArray.indexOf("SP"+chain[index2]) > -1){
+						actual = "P";
+						valortot++;
+					}
+					if(stringArray.indexOf("SQ"+chain[index2]) > -1){
+						actual = "Q";
+						valortot++;
+					}
+					if(stringArray.indexOf("SR"+chain[index2]) > -1){
+						actual = "R";
+						valortot++;
+					}
+					if(stringArray.indexOf("ST"+chain[index2]) > -1){
+						actual = "T";
+						valortot++;
+					}
+				}
+
+				if (actual == "T"){
+					if (stringArray.indexOf("TT"+chain[index2]) > -1){
+						actual = "P";
+						valortot++;
+					}
+					if(stringArray.indexOf("TP"+chain[index2]) > -1){
+						actual = "P";
+						valortot++;
+					}
+					if(stringArray.indexOf("TQ"+chain[index2]) > -1){
+						actual = "Q";
+						valortot++;
+					}
+					if(stringArray.indexOf("TR"+chain[index2]) > -1){
+						actual = "R";
+						valortot++;
+					}
+					if(stringArray.indexOf("TS"+chain[index2]) > -1){
+						actual = "S";
+						valortot++;
+					}
+				}
+
+				if ((valortot > index2) && (fin.indexOf(actual) > -1)) {
+					alert("Tu cadena hasta " +chain[index2]+ " se ejecuto con exito!");
+				}else if (valortot < index2){
+					alert("Tu cadena se detuvo en " +chain[index2]+ " ya no es posible continuar");
+				}
+			
+			}
+
+			
+		// canvas del automata
+	    var c = document.getElementById("myCanvas");
+		var ctx = c.getContext("2d");
+		
+		// ctx.arc(x,y,,)
+		if (estados == 5) {
+
+			// Posibles conexiones :)
+			// arc(x, y, radius, startAngle, endAngle, anticlockwise) - Arco
+			// quadraticCurveTo(cp1x, cp1y, x, y) - Curva
+			ctx.strokeStyle="red";
+			if(funcisentrada[0] == "P" && funcissalida[0] == "P"){
+			ctx.fillText(simb,10,65);
+			ctx.beginPath();
+    		ctx.arc(30, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "Q" && funcissalida[0] == "Q"){
+    		ctx.fillText(simb,235,65);
+			ctx.beginPath();
+    		ctx.arc(255, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "R" && funcissalida[0] == "R"){
+    		ctx.fillText(simb,460,65);
+			ctx.beginPath();
+    		ctx.arc(480, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "S" && funcissalida[0] == "S"){
+    		ctx.fillText(simb,685,65);
+			ctx.beginPath();
+    		ctx.arc(705, 95, 25, 0, 120, true)
+    		ctx.stroke();
+			}
+			if(funcisentrada[0] == "T" && funcissalida[0] == "T"){
+    		ctx.fillText(simb,910,65);
+			ctx.beginPath();
+    		ctx.arc(930, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+
+			// ---------------------------Lineas--------------------------
+			if(funcisentrada[0] == "Q" && funcissalida[0] == "P"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,150,85);
+			ctx.beginPath();
+		    ctx.moveTo(55,90);
+		    ctx.lineTo(270,90);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "P" && funcissalida[0] == "Q"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,150,127);
+			ctx.beginPath();
+		    ctx.moveTo(270,115);
+		    ctx.lineTo(55,115);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "R" && funcissalida[0] == "Q"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,350,85);
+			ctx.beginPath();
+		    ctx.moveTo(280,90);
+		    ctx.lineTo(495,90);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "Q" && funcissalida[0] == "R"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,350,127);
+			ctx.beginPath();
+		    ctx.moveTo(495,115);
+		    ctx.lineTo(280,115);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "S" && funcissalida[0] == "R"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,575,85);
+			ctx.beginPath();
+		    ctx.moveTo(505,90);
+		    ctx.lineTo(720,90);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "R" && funcissalida[0] == "S"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,575,127);
+			ctx.beginPath();
+		    ctx.moveTo(720,115);
+		    ctx.lineTo(505,115);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "T" && funcissalida[0] == "S"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,800,85);
+			ctx.beginPath();
+		    ctx.moveTo(730,90);
+		    ctx.lineTo(945,90);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "S" && funcissalida[0] == "T"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,800,127);
+			ctx.beginPath();
+		    ctx.moveTo(945,115);
+		    ctx.lineTo(730,115);
+    		ctx.stroke();
+    		}
+    		// ----------------------------Curvas--------------------------
+    		if(funcisentrada[0] == "R" && funcissalida[0] == "P"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,275,35);
+			ctx.beginPath();
+		   	ctx.quadraticCurveTo(55, 100, 275, 50)
+		   	ctx.quadraticCurveTo(275, 50, 495, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "P" && funcissalida[0] == "R"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,275,170);
+			ctx.beginPath();
+		    ctx.quadraticCurveTo(55, 100, 275, 150)
+		   	ctx.quadraticCurveTo(275, 150, 495, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "S" && funcissalida[0] == "P"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,385,15);
+			ctx.beginPath();
+		   	ctx.quadraticCurveTo(55, 100, 385, 50)
+		   	ctx.quadraticCurveTo(385, 50, 720, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "P" && funcissalida[0] == "S"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,385,190);
+			ctx.beginPath();
+		    ctx.quadraticCurveTo(55, 100, 385, 150)
+		   	ctx.quadraticCurveTo(385, 150, 720, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "T" && funcissalida[0] == "P"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,545,15);
+			ctx.beginPath();
+		   	ctx.quadraticCurveTo(55, 100, 545, 50)
+		   	ctx.quadraticCurveTo(545, 50, 945, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "P" && funcissalida[0] == "T"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,545,190);
+			ctx.beginPath();
+		    ctx.quadraticCurveTo(55, 100, 545, 150)
+		   	ctx.quadraticCurveTo(545, 150, 945, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "S" && funcissalida[0] == "Q"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,500,25);
+			ctx.beginPath();
+		   	ctx.quadraticCurveTo(280, 100, 500, 50)
+		   	ctx.quadraticCurveTo(500, 50, 720, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "Q" && funcissalida[0] == "S"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,500,180);
+			ctx.beginPath();
+		    ctx.quadraticCurveTo(280, 100, 500, 150)
+		   	ctx.quadraticCurveTo(500, 150, 720, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "T" && funcissalida[0] == "Q"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,610,25);
+			ctx.beginPath();
+		   	ctx.quadraticCurveTo(280, 100, 610, 50)
+		   	ctx.quadraticCurveTo(610, 50, 945, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "Q" && funcissalida[0] == "T"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,610,180);
+			ctx.beginPath();
+		    ctx.quadraticCurveTo(280, 100, 610, 150)
+		   	ctx.quadraticCurveTo(610, 150, 945, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "T" && funcissalida[0] == "R"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,725,35);
+			ctx.beginPath();
+		   	ctx.quadraticCurveTo(505, 100, 725, 50)
+		   	ctx.quadraticCurveTo(725, 50, 945, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "R" && funcissalida[0] == "T"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,725,170);
+			ctx.beginPath();
+		    ctx.quadraticCurveTo(505, 100, 725, 150)
+		   	ctx.quadraticCurveTo(725, 150, 945, 100)
+    		ctx.stroke();
+    		}
+
+    		// ---------------------------------------------------------------
+
+    		ctx.strokeStyle="black";
+    		// ---------------------------------------------------------------
+
+			ctx.beginPath();
+			ctx.fillText("P",47,105);
+			ctx.arc(50,100,20,0,2*Math.PI);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.fillText("Q",272,105);
+			ctx.arc(275,100,20,0,2*Math.PI);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.fillText("R",497,105);
+			ctx.arc(500,100,20,0,2*Math.PI);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.fillText("S",722,105);
+			ctx.arc(725,100,20,0,2*Math.PI);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.fillText("T",947,105);
+			ctx.arc(950,100,20,0,2*Math.PI);
+			ctx.stroke();
+
+			// inicio
+			if (init.indexOf("P") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",15,105);
+			ctx.stroke();
+			}
+			if (init.indexOf("Q") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",237,105);
+			ctx.stroke();
+		    }
+		    if (init.indexOf("R") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",462,105);
+			ctx.stroke();
+		    }
+		    if (init.indexOf("S") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",687,105);
+			ctx.stroke();
+		    }
+		    if (init.indexOf("T") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",912,105);
+			ctx.stroke();
+		    }
+
+			// final
+			if (fin.indexOf("P") > -1){
+			ctx.beginPath();
+			ctx.arc(50,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+			if (fin.indexOf("Q") > -1){
+			ctx.beginPath();
+			ctx.arc(275,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+			if (fin.indexOf("R") > -1){
+			ctx.beginPath();
+			ctx.arc(500,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+			if (fin.indexOf("S") > -1){
+			ctx.beginPath();
+			ctx.arc(725,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+			if (fin.indexOf("T") > -1){
+			ctx.beginPath();
+			ctx.arc(950,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+		}
+
+		if (estados == 4) {
+
+			// Posibles conexiones :)
+			// arc(x, y, radius, startAngle, endAngle, anticlockwise) - Arco
+			// quadraticCurveTo(cp1x, cp1y, x, y) - Curva
+			ctx.strokeStyle="red";
+			if(funcisentrada[0] == "P" && funcissalida[0] == "P"){
+			ctx.fillText(simb,160,65);
+			ctx.beginPath();
+    		ctx.arc(180, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "Q" && funcissalida[0] == "Q"){
+    		ctx.fillText(simb,360,65);
+			ctx.beginPath();
+    		ctx.arc(380, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "R" && funcissalida[0] == "R"){
+    		ctx.fillText(simb,560,65);
+			ctx.beginPath();
+    		ctx.arc(580, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "S" && funcissalida[0] == "S"){
+    		ctx.fillText(simb,760,65);
+			ctx.beginPath();
+    		ctx.arc(780, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+
+			// ---------------------------Lineas--------------------------
+    		if(funcisentrada[0] == "Q" && funcissalida[0] == "P"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,275,85);
+			ctx.beginPath();
+		    ctx.moveTo(205,90);
+		    ctx.lineTo(395,90);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "P" && funcissalida[0] == "Q"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,275,127);
+			ctx.beginPath();
+		    ctx.moveTo(395,115);
+		    ctx.lineTo(205,115);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "R" && funcissalida[0] == "Q"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,485,85);
+			ctx.beginPath();
+		    ctx.moveTo(405,90);
+		    ctx.lineTo(595,90);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "Q" && funcissalida[0] == "R"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,485,127);
+			ctx.beginPath();
+		    ctx.moveTo(595,115);
+		    ctx.lineTo(405,115);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "S" && funcissalida[0] == "R"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,680,85);
+			ctx.beginPath();
+		    ctx.moveTo(605,90);
+		    ctx.lineTo(795,90);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "R" && funcissalida[0] == "S"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,680,127);
+			ctx.beginPath();
+		    ctx.moveTo(795,115);
+		    ctx.lineTo(605,115);
+    		ctx.stroke();
+    		}
+    		// ----------------------------Curvas--------------------------
+    		if(funcisentrada[0] == "R" && funcissalida[0] == "P"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,400,35);
+			ctx.beginPath();
+		   	ctx.quadraticCurveTo(205, 100, 400, 50)
+		   	ctx.quadraticCurveTo(400, 50, 595, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "P" && funcissalida[0] == "R"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,400,170);
+			ctx.beginPath();
+		    ctx.quadraticCurveTo(205, 100, 400, 150)
+		   	ctx.quadraticCurveTo(400, 150, 595, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "S" && funcissalida[0] == "P"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,500,35);
+			ctx.beginPath();
+		   	ctx.quadraticCurveTo(205, 100, 500, 50)
+		   	ctx.quadraticCurveTo(500, 50, 795, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "P" && funcissalida[0] == "S"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,500,170);
+			ctx.beginPath();
+		    ctx.quadraticCurveTo(205, 100, 500, 150)
+		   	ctx.quadraticCurveTo(500, 150, 795, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "S" && funcissalida[0] == "Q"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,600,35);
+			ctx.beginPath();
+		   	ctx.quadraticCurveTo(405, 100, 600, 50)
+		   	ctx.quadraticCurveTo(600, 50, 795, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "Q" && funcissalida[0] == "S"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,600,170);
+			ctx.beginPath();
+		    ctx.quadraticCurveTo(405, 100, 600, 150)
+		   	ctx.quadraticCurveTo(600, 150, 795, 100)
+    		ctx.stroke();
+    		}
+
+    		// ---------------------------------------------------------------
+
+    		ctx.strokeStyle="black";
+    		// ---------------------------------------------------------------
+
+			ctx.beginPath();
+			ctx.fillText("P",197,105);
+			ctx.arc(200,100,20,0,2*Math.PI);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.fillText("Q",397,105);
+			ctx.arc(400,100,20,0,2*Math.PI);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.fillText("R",597,105);
+			ctx.arc(600,100,20,0,2*Math.PI);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.fillText("S",797,105);
+			ctx.arc(800,100,20,0,2*Math.PI);
+			ctx.stroke();
+
+			// inicio
+			if (init.indexOf("P") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",165,105);
+			ctx.stroke();
+			}
+			if (init.indexOf("Q") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",362,105);
+			ctx.stroke();
+		    }
+		    if (init.indexOf("R") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",562,105);
+			ctx.stroke();
+		    }
+		    if (init.indexOf("S") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",762,105);
+			ctx.stroke();
+		    }
+
+			// final
+			if (fin.indexOf("P") > -1){
+			ctx.beginPath();
+			ctx.arc(200,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+			if (fin.indexOf("Q") > -1){
+			ctx.beginPath();
+			ctx.arc(400,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+			if (fin.indexOf("R") > -1){
+			ctx.beginPath();
+			ctx.arc(600,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+			if (fin.indexOf("S") > -1){
+			ctx.beginPath();
+			ctx.arc(800,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+		}
+
+		if (estados == 3) {
+
+			// Posibles conexiones :)
+			// arc(x, y, radius, startAngle, endAngle, anticlockwise) - Arco
+			// quadraticCurveTo(cp1x, cp1y, x, y) - Curva
+			ctx.strokeStyle="red";
+			if(funcisentrada[0] == "P" && funcissalida[0] == "P"){
+			ctx.fillText(simb,110,65);
+			ctx.beginPath();
+    		ctx.arc(130, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "Q" && funcissalida[0] == "Q"){
+    		ctx.fillText(simb,460,65);
+			ctx.beginPath();
+    		ctx.arc(480, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+			if(funcisentrada[0] == "R" && funcissalida[0] == "R"){
+    		ctx.fillText(simb,810,65);
+			ctx.beginPath();
+    		ctx.arc(830, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+
+			// ---------------------------Lineas--------------------------
+    		if(funcisentrada[0] == "Q" && funcissalida[0] == "P"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,315,85);
+			ctx.beginPath();
+		    ctx.moveTo(155,90);
+		    ctx.lineTo(495,90);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "P" && funcissalida[0] == "Q"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,315,127);
+			ctx.beginPath();
+		    ctx.moveTo(495,115);
+		    ctx.lineTo(155,115);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "R" && funcissalida[0] == "Q"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,680,85);
+			ctx.beginPath();
+		    ctx.moveTo(505,90);
+		    ctx.lineTo(845,90);
+    		ctx.stroke();
+    		}
+			if(funcisentrada[0] == "Q" && funcissalida[0] == "R"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,680,127);
+			ctx.beginPath();
+		    ctx.moveTo(845,115);
+		    ctx.lineTo(505,115);
+    		ctx.stroke();
+    		}
+    		// ----------------------------Curvas--------------------------
+			
+    		if(funcisentrada[0] == "R" && funcissalida[0] == "P"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,500,45);
+			ctx.beginPath();
+		   	ctx.quadraticCurveTo(155, 100, 500, 50)
+		   	ctx.quadraticCurveTo(500, 50, 845, 100)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "P" && funcissalida[0] == "R"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,500,160);
+			ctx.beginPath();
+		    ctx.quadraticCurveTo(155, 100, 500, 150)
+		   	ctx.quadraticCurveTo(500, 150, 845, 100)
+    		ctx.stroke();
+    		}
+    		// ---------------------------------------------------------------
+    		ctx.strokeStyle="black";
+    		// ---------------------------------------------------------------
+
+			ctx.beginPath();
+			ctx.fillText("P",147,105);
+			ctx.arc(150,100,20,0,2*Math.PI);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.fillText("Q",497,105);
+			ctx.arc(500,100,20,0,2*Math.PI);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.fillText("R",847,105);
+			ctx.arc(850,100,20,0,2*Math.PI);
+			ctx.stroke();
+
+			// inicio
+			if (init.indexOf("P") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",112,105);
+			ctx.stroke();
+			}
+			if (init.indexOf("Q") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",462,105);
+			ctx.stroke();
+		    }
+		    if (init.indexOf("R") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",812,105);
+			ctx.stroke();
+		    }
+
+			// final
+			if (fin.indexOf("P") > -1){
+			ctx.beginPath();
+			ctx.arc(150,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+			if (fin.indexOf("Q") > -1){
+			ctx.beginPath();
+			ctx.arc(500,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+			if (fin.indexOf("R") > -1){
+			ctx.beginPath();
+			ctx.arc(850,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+		}
+
+		if (estados == 2) {
+
+			// Posibles conexiones :)
+			// arc(x, y, radius, startAngle, endAngle, anticlockwise) - Arco
+			// quadraticCurveTo(cp1x, cp1y, x, y) - Curva
+			ctx.strokeStyle="red";
+			if(funcisentrada[0] == "P" && funcissalida[0] == "P"){
+			ctx.strokeStyle="red";
+			ctx.fillText(simb,305,65);
+			ctx.beginPath();
+    		ctx.arc(325, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "Q" && funcissalida[0] == "Q"){
+    		ctx.fillText(simb,605,65);
+			ctx.beginPath();
+    		ctx.arc(625, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+
+    		// ---------------------------Lineas--------------------------
+    		if(funcisentrada[0] == "Q" && funcissalida[0] == "P"){
+    		ctx.strokeStyle="green";
+    		ctx.fillText(simb,475,85);
+			ctx.beginPath();
+		    ctx.moveTo(355,90);
+		    ctx.lineTo(645,90);
+    		ctx.stroke();
+    		}
+    		if(funcisentrada[0] == "P" && funcissalida[0] == "Q"){
+    		ctx.strokeStyle="blue";
+    		ctx.fillText(simb,475,127);
+			ctx.beginPath();
+		    ctx.moveTo(645,115);
+		    ctx.lineTo(355,115);
+    		ctx.stroke();
+    		}
+
+    		// ----------------------------Curvas--------------------------
+
+    		// ---------------------------------------------------------------
+    		ctx.strokeStyle="black";
+    		// ---------------------------------------------------------------
+
+			ctx.beginPath();
+			ctx.fillText("P",347,105);
+			ctx.arc(350,100,20,0,2*Math.PI);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.fillText("Q",645,105);
+			ctx.arc(650,100,20,0,2*Math.PI);
+			ctx.stroke();
+
+			// inicio
+			if (init.indexOf("P") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",312,105);
+			ctx.stroke();
+		    }
+		    if (init.indexOf("Q") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",610,105);
+			ctx.stroke();
+		    }
+
+			// final
+			if (fin.indexOf("P") > -1){
+			ctx.beginPath();
+			ctx.arc(350,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+			if (fin.indexOf("Q") > -1){
+			ctx.beginPath();
+			ctx.arc(650,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+		}
+
+		if (estados == 1) {
+
+			// Posibles conexiones :)
+			// arc(x, y, radius, startAngle, endAngle, anticlockwise) - Arco
+			// quadraticCurveTo(cp1x, cp1y, x, y) - Curva
+			if(funcisentrada[0] == "P" && funcissalida[0] == "P"){
+			ctx.strokeStyle="red";
+			ctx.fillText(simb,460,65);
+			ctx.beginPath();
+    		ctx.arc(480, 95, 25, 0, 120, true)
+    		ctx.stroke();
+    		}
+    		ctx.strokeStyle="black";
+    		// ---------------------------------------------------------------
+
+			ctx.beginPath();
+			ctx.fillText("P",497,105);
+			ctx.arc(500,100,20,0,2*Math.PI);
+			ctx.stroke();
+
+			// inicio
+			if (init.indexOf("P") > -1){
+			ctx.beginPath();
+			ctx.fillText("* -----> ",465,105);
+			ctx.stroke();
+			}
+
+			// final
+			if (fin.indexOf("P") > -1){
+			ctx.beginPath();
+			ctx.arc(500,100,25,0,2*Math.PI);
+			ctx.stroke();
+			}
+		}
+		ctx.closePath();
+		});
+	    });
+	</script>
+<!-- -------------------------------------------------------------- -->
+    </center>
+
+</body>
+</html>

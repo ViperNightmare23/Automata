@@ -1,0 +1,10 @@
+1. Elegir tus estados.
+2. Inserta tus simbolos separados por espacios.
+3. Inserta tu estados iniciales separados por espacios.
+4. Inserta tu estados finales separados por espacios.
+5. Ingresa tus funciones 1 por 1, presiona Go para introducir mas. 
+-  Sintaxis { "Einicial" "conjunto de simbolos separados por espacios" "Efinal" }
+
+6. Si terminaste de introducir funciones asegurate que el campo de introducción quede limpio para evitar redundancia.
+7. Introduce tu cadena separada por espacios en blanco y agrega un simbolo extra al final que no este en tu conjunto.
+8. Tu programa te dira cada vez que encuentre un estado final en la corrida y en posicion se encuentra, o si no es posible continuar.
