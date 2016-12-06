@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<title>AFN y AFD</title>
+<title>Automata de Pila</title>
 <head>
 <!-- Libreria de jquery -->
   <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
@@ -35,8 +35,7 @@
     <br>
     Funciones <br>
     <input name="funcion" id="funcion" placeholder="{ P a b 1 0 R } 1 por Go! "/> <br><br>
-   
-    <br><br>
+    
     <!-- dibujare aqui las transiciones por medio de javascript -->
     Transiciones <br>
     <textarea id="textarea1" rows="8" cols="30"></textarea><br>
@@ -51,6 +50,12 @@
     <INPUT TYPE="button" onClick="history.go(0)" VALUE="Refresh">
     </div>
 
+    <br>
+    Movimientos de Pila <br>
+    <input name="pila" id="pila" placeholder="X Y Z ~ 1 por Go! "/> <br><br>
+
+    Transiciones de Pila<br>
+    <textarea id="textareapila" rows="8" cols="30"></textarea><br>
 </form>
 
     <br>
@@ -105,15 +110,63 @@
           // console.log(funcisentrada);
           // console.log(transiciones);
 
+// ----------
+      // Transiciones de Pila
+
+      // valores para determinar cadena, inicial, final, lectura de funciones
+          var funcissalidap = [];
+          var funcisentradap = [];
+
+          var e1ip = pila.indexOf("{");
+          var e1fp = pila.indexOf("}");
+
+          var transicionesp = [];
+          transicionesp.push(data[5].value);
+
+          funcissalidap.push(pila[e1ip+1]); 
+          funcisentradap.push(pila[e1fp-1]);
+          var numerosp = (e1fp-2)-(e1ip+1) + 1;
+
+          // simbolos de estado/transicion
+          var simbiosisp = [];
+
+          for(var ip = e1ip+2; ip <= numerosp; ip++){
+          simbiosisp.push(pila[ip]);
+        }
+        var simbp = simbiosisp;
+
+        
+
+          // escribe transiciones en textareapila
+
+          for (indexp = 0; indexp < 1; ++indexp) {
+      var objp=document.getElementById("textareapila");
+      
+      
+
+      objp.value+=localStorage["pila"]+","+pila+"\r\n";
+
+      var pilanueva = pila;
+      localStorage["pilapass"] = pila;
+      pilanueva.splice(0, 1);
+      
+      localStorage["pila"] = pilanueva;
+      }
+
+// ---------
+
           // escribe transiciones en textarea
-          for (index = 0; index < simb.length; ++index) {
+
+      for (index = 0; index < simb.length; ++index) {
       var obj=document.getElementById("textarea1");
-      obj.value+=funcissalida+funcisentrada+simb[index]+"\r\n";
+      obj.value+=funcissalida+funcisentrada+simb[index]+"->"+localStorage["pilapass"]+"\r\n";
       }
 
       var stringArray = document.getElementById('textarea1').value.split('\n');
       var actual = init;
       var valortot = 0;
+
+
 
       // ciclo de revision de la cadena probando que el estado actual sea =
       for (index2 = 0; index2 < chain.length; ++index2) {
@@ -255,31 +308,31 @@
       // quadraticCurveTo(cp1x, cp1y, x, y) - Curva
       ctx.strokeStyle="red";
       if(funcisentrada[0] == "P" && funcissalida[0] == "P"){
-      ctx.fillText(simb,10,65);
+      ctx.fillText(simb+'->'+localStorage["pilapass"],10,65);
       ctx.beginPath();
         ctx.arc(30, 95, 25, 0, 120, true)
         ctx.stroke();
         }
         if(funcisentrada[0] == "Q" && funcissalida[0] == "Q"){
-        ctx.fillText(simb,235,65);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],235,65);
       ctx.beginPath();
         ctx.arc(255, 95, 25, 0, 120, true)
         ctx.stroke();
         }
         if(funcisentrada[0] == "R" && funcissalida[0] == "R"){
-        ctx.fillText(simb,460,65);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],460,65);
       ctx.beginPath();
         ctx.arc(480, 95, 25, 0, 120, true)
         ctx.stroke();
         }
         if(funcisentrada[0] == "S" && funcissalida[0] == "S"){
-        ctx.fillText(simb,685,65);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],685,65);
       ctx.beginPath();
         ctx.arc(705, 95, 25, 0, 120, true)
         ctx.stroke();
       }
       if(funcisentrada[0] == "T" && funcissalida[0] == "T"){
-        ctx.fillText(simb,910,65);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],910,65);
       ctx.beginPath();
         ctx.arc(930, 95, 25, 0, 120, true)
         ctx.stroke();
@@ -288,7 +341,7 @@
       // ---------------------------Lineas--------------------------
       if(funcisentrada[0] == "Q" && funcissalida[0] == "P"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,150,85);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],150,85);
       ctx.beginPath();
         ctx.moveTo(55,90);
         ctx.lineTo(270,90);
@@ -296,7 +349,7 @@
         }
         if(funcisentrada[0] == "P" && funcissalida[0] == "Q"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,150,127);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],150,127);
       ctx.beginPath();
         ctx.moveTo(270,115);
         ctx.lineTo(55,115);
@@ -304,7 +357,7 @@
         }
         if(funcisentrada[0] == "R" && funcissalida[0] == "Q"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,350,85);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],350,85);
       ctx.beginPath();
         ctx.moveTo(280,90);
         ctx.lineTo(495,90);
@@ -312,7 +365,7 @@
         }
         if(funcisentrada[0] == "Q" && funcissalida[0] == "R"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,350,127);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],350,127);
       ctx.beginPath();
         ctx.moveTo(495,115);
         ctx.lineTo(280,115);
@@ -320,7 +373,7 @@
         }
         if(funcisentrada[0] == "S" && funcissalida[0] == "R"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,575,85);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],575,85);
       ctx.beginPath();
         ctx.moveTo(505,90);
         ctx.lineTo(720,90);
@@ -328,7 +381,7 @@
         }
         if(funcisentrada[0] == "R" && funcissalida[0] == "S"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,575,127);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],575,127);
       ctx.beginPath();
         ctx.moveTo(720,115);
         ctx.lineTo(505,115);
@@ -336,7 +389,7 @@
         }
         if(funcisentrada[0] == "T" && funcissalida[0] == "S"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,800,85);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],800,85);
       ctx.beginPath();
         ctx.moveTo(730,90);
         ctx.lineTo(945,90);
@@ -344,7 +397,7 @@
         }
         if(funcisentrada[0] == "S" && funcissalida[0] == "T"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,800,127);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],800,127);
       ctx.beginPath();
         ctx.moveTo(945,115);
         ctx.lineTo(730,115);
@@ -353,7 +406,7 @@
         // ----------------------------Curvas--------------------------
         if(funcisentrada[0] == "R" && funcissalida[0] == "P"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,275,35);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],275,35);
       ctx.beginPath();
         ctx.quadraticCurveTo(55, 100, 275, 50)
         ctx.quadraticCurveTo(275, 50, 495, 100)
@@ -361,7 +414,7 @@
         }
         if(funcisentrada[0] == "P" && funcissalida[0] == "R"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,275,170);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],275,170);
       ctx.beginPath();
         ctx.quadraticCurveTo(55, 100, 275, 150)
         ctx.quadraticCurveTo(275, 150, 495, 100)
@@ -369,7 +422,7 @@
         }
         if(funcisentrada[0] == "S" && funcissalida[0] == "P"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,385,15);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],385,15);
       ctx.beginPath();
         ctx.quadraticCurveTo(55, 100, 385, 50)
         ctx.quadraticCurveTo(385, 50, 720, 100)
@@ -377,7 +430,7 @@
         }
         if(funcisentrada[0] == "P" && funcissalida[0] == "S"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,385,190);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],385,190);
       ctx.beginPath();
         ctx.quadraticCurveTo(55, 100, 385, 150)
         ctx.quadraticCurveTo(385, 150, 720, 100)
@@ -385,7 +438,7 @@
         }
         if(funcisentrada[0] == "T" && funcissalida[0] == "P"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,545,15);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],545,15);
       ctx.beginPath();
         ctx.quadraticCurveTo(55, 100, 545, 50)
         ctx.quadraticCurveTo(545, 50, 945, 100)
@@ -393,7 +446,7 @@
         }
         if(funcisentrada[0] == "P" && funcissalida[0] == "T"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,545,190);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],545,190);
       ctx.beginPath();
         ctx.quadraticCurveTo(55, 100, 545, 150)
         ctx.quadraticCurveTo(545, 150, 945, 100)
@@ -401,7 +454,7 @@
         }
         if(funcisentrada[0] == "S" && funcissalida[0] == "Q"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,500,25);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],500,25);
       ctx.beginPath();
         ctx.quadraticCurveTo(280, 100, 500, 50)
         ctx.quadraticCurveTo(500, 50, 720, 100)
@@ -409,7 +462,7 @@
         }
         if(funcisentrada[0] == "Q" && funcissalida[0] == "S"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,500,180);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],500,180);
       ctx.beginPath();
         ctx.quadraticCurveTo(280, 100, 500, 150)
         ctx.quadraticCurveTo(500, 150, 720, 100)
@@ -417,7 +470,7 @@
         }
         if(funcisentrada[0] == "T" && funcissalida[0] == "Q"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,610,25);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],610,25);
       ctx.beginPath();
         ctx.quadraticCurveTo(280, 100, 610, 50)
         ctx.quadraticCurveTo(610, 50, 945, 100)
@@ -425,7 +478,7 @@
         }
         if(funcisentrada[0] == "Q" && funcissalida[0] == "T"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,610,180);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],610,180);
       ctx.beginPath();
         ctx.quadraticCurveTo(280, 100, 610, 150)
         ctx.quadraticCurveTo(610, 150, 945, 100)
@@ -433,7 +486,7 @@
         }
         if(funcisentrada[0] == "T" && funcissalida[0] == "R"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,725,35);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],725,35);
       ctx.beginPath();
         ctx.quadraticCurveTo(505, 100, 725, 50)
         ctx.quadraticCurveTo(725, 50, 945, 100)
@@ -441,7 +494,7 @@
         }
         if(funcisentrada[0] == "R" && funcissalida[0] == "T"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,725,170);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],725,170);
       ctx.beginPath();
         ctx.quadraticCurveTo(505, 100, 725, 150)
         ctx.quadraticCurveTo(725, 150, 945, 100)
@@ -536,25 +589,25 @@
       // quadraticCurveTo(cp1x, cp1y, x, y) - Curva
       ctx.strokeStyle="red";
       if(funcisentrada[0] == "P" && funcissalida[0] == "P"){
-      ctx.fillText(simb,160,65);
+      ctx.fillText(simb+'->'+localStorage["pilapass"],160,65);
       ctx.beginPath();
         ctx.arc(180, 95, 25, 0, 120, true)
         ctx.stroke();
         }
         if(funcisentrada[0] == "Q" && funcissalida[0] == "Q"){
-        ctx.fillText(simb,360,65);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],360,65);
       ctx.beginPath();
         ctx.arc(380, 95, 25, 0, 120, true)
         ctx.stroke();
         }
         if(funcisentrada[0] == "R" && funcissalida[0] == "R"){
-        ctx.fillText(simb,560,65);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],560,65);
       ctx.beginPath();
         ctx.arc(580, 95, 25, 0, 120, true)
         ctx.stroke();
         }
         if(funcisentrada[0] == "S" && funcissalida[0] == "S"){
-        ctx.fillText(simb,760,65);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],760,65);
       ctx.beginPath();
         ctx.arc(780, 95, 25, 0, 120, true)
         ctx.stroke();
@@ -563,7 +616,7 @@
       // ---------------------------Lineas--------------------------
         if(funcisentrada[0] == "Q" && funcissalida[0] == "P"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,275,85);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],275,85);
       ctx.beginPath();
         ctx.moveTo(205,90);
         ctx.lineTo(395,90);
@@ -571,7 +624,7 @@
         }
         if(funcisentrada[0] == "P" && funcissalida[0] == "Q"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,275,127);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],275,127);
       ctx.beginPath();
         ctx.moveTo(395,115);
         ctx.lineTo(205,115);
@@ -579,7 +632,7 @@
         }
         if(funcisentrada[0] == "R" && funcissalida[0] == "Q"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,485,85);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],485,85);
       ctx.beginPath();
         ctx.moveTo(405,90);
         ctx.lineTo(595,90);
@@ -587,7 +640,7 @@
         }
         if(funcisentrada[0] == "Q" && funcissalida[0] == "R"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,485,127);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],485,127);
       ctx.beginPath();
         ctx.moveTo(595,115);
         ctx.lineTo(405,115);
@@ -595,7 +648,7 @@
         }
         if(funcisentrada[0] == "S" && funcissalida[0] == "R"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,680,85);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],680,85);
       ctx.beginPath();
         ctx.moveTo(605,90);
         ctx.lineTo(795,90);
@@ -603,7 +656,7 @@
         }
         if(funcisentrada[0] == "R" && funcissalida[0] == "S"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,680,127);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],680,127);
       ctx.beginPath();
         ctx.moveTo(795,115);
         ctx.lineTo(605,115);
@@ -612,7 +665,7 @@
         // ----------------------------Curvas--------------------------
         if(funcisentrada[0] == "R" && funcissalida[0] == "P"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,400,35);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],400,35);
       ctx.beginPath();
         ctx.quadraticCurveTo(205, 100, 400, 50)
         ctx.quadraticCurveTo(400, 50, 595, 100)
@@ -620,7 +673,7 @@
         }
         if(funcisentrada[0] == "P" && funcissalida[0] == "R"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,400,170);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],400,170);
       ctx.beginPath();
         ctx.quadraticCurveTo(205, 100, 400, 150)
         ctx.quadraticCurveTo(400, 150, 595, 100)
@@ -628,7 +681,7 @@
         }
         if(funcisentrada[0] == "S" && funcissalida[0] == "P"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,500,35);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],500,35);
       ctx.beginPath();
         ctx.quadraticCurveTo(205, 100, 500, 50)
         ctx.quadraticCurveTo(500, 50, 795, 100)
@@ -636,7 +689,7 @@
         }
         if(funcisentrada[0] == "P" && funcissalida[0] == "S"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,500,170);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],500,170);
       ctx.beginPath();
         ctx.quadraticCurveTo(205, 100, 500, 150)
         ctx.quadraticCurveTo(500, 150, 795, 100)
@@ -644,7 +697,7 @@
         }
         if(funcisentrada[0] == "S" && funcissalida[0] == "Q"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,600,35);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],600,35);
       ctx.beginPath();
         ctx.quadraticCurveTo(405, 100, 600, 50)
         ctx.quadraticCurveTo(600, 50, 795, 100)
@@ -652,7 +705,7 @@
         }
         if(funcisentrada[0] == "Q" && funcissalida[0] == "S"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,600,170);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],600,170);
       ctx.beginPath();
         ctx.quadraticCurveTo(405, 100, 600, 150)
         ctx.quadraticCurveTo(600, 150, 795, 100)
@@ -733,19 +786,19 @@
       // quadraticCurveTo(cp1x, cp1y, x, y) - Curva
       ctx.strokeStyle="red";
       if(funcisentrada[0] == "P" && funcissalida[0] == "P"){
-      ctx.fillText(simb,110,65);
+      ctx.fillText(simb+'->'+localStorage["pilapass"],110,65);
       ctx.beginPath();
         ctx.arc(130, 95, 25, 0, 120, true)
         ctx.stroke();
         }
         if(funcisentrada[0] == "Q" && funcissalida[0] == "Q"){
-        ctx.fillText(simb,460,65);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],460,65);
       ctx.beginPath();
         ctx.arc(480, 95, 25, 0, 120, true)
         ctx.stroke();
         }
       if(funcisentrada[0] == "R" && funcissalida[0] == "R"){
-        ctx.fillText(simb,810,65);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],810,65);
       ctx.beginPath();
         ctx.arc(830, 95, 25, 0, 120, true)
         ctx.stroke();
@@ -754,7 +807,7 @@
       // ---------------------------Lineas--------------------------
         if(funcisentrada[0] == "Q" && funcissalida[0] == "P"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,315,85);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],315,85);
       ctx.beginPath();
         ctx.moveTo(155,90);
         ctx.lineTo(495,90);
@@ -762,7 +815,7 @@
         }
         if(funcisentrada[0] == "P" && funcissalida[0] == "Q"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,315,127);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],315,127);
       ctx.beginPath();
         ctx.moveTo(495,115);
         ctx.lineTo(155,115);
@@ -770,7 +823,7 @@
         }
         if(funcisentrada[0] == "R" && funcissalida[0] == "Q"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,680,85);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],680,85);
       ctx.beginPath();
         ctx.moveTo(505,90);
         ctx.lineTo(845,90);
@@ -778,7 +831,7 @@
         }
       if(funcisentrada[0] == "Q" && funcissalida[0] == "R"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,680,127);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],680,127);
       ctx.beginPath();
         ctx.moveTo(845,115);
         ctx.lineTo(505,115);
@@ -788,7 +841,7 @@
       
         if(funcisentrada[0] == "R" && funcissalida[0] == "P"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,500,45);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],500,45);
       ctx.beginPath();
         ctx.quadraticCurveTo(155, 100, 500, 50)
         ctx.quadraticCurveTo(500, 50, 845, 100)
@@ -796,7 +849,7 @@
         }
         if(funcisentrada[0] == "P" && funcissalida[0] == "R"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,500,160);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],500,160);
       ctx.beginPath();
         ctx.quadraticCurveTo(155, 100, 500, 150)
         ctx.quadraticCurveTo(500, 150, 845, 100)
@@ -862,13 +915,13 @@
       ctx.strokeStyle="red";
       if(funcisentrada[0] == "P" && funcissalida[0] == "P"){
       ctx.strokeStyle="red";
-      ctx.fillText(simb,305,65);
+      ctx.fillText(simb+'->'+localStorage["pilapass"],305,65);
       ctx.beginPath();
         ctx.arc(325, 95, 25, 0, 120, true)
         ctx.stroke();
         }
         if(funcisentrada[0] == "Q" && funcissalida[0] == "Q"){
-        ctx.fillText(simb,605,65);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],605,65);
       ctx.beginPath();
         ctx.arc(625, 95, 25, 0, 120, true)
         ctx.stroke();
@@ -877,7 +930,7 @@
         // ---------------------------Lineas--------------------------
         if(funcisentrada[0] == "Q" && funcissalida[0] == "P"){
         ctx.strokeStyle="green";
-        ctx.fillText(simb,475,85);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],475,85);
       ctx.beginPath();
         ctx.moveTo(355,90);
         ctx.lineTo(645,90);
@@ -885,7 +938,7 @@
         }
         if(funcisentrada[0] == "P" && funcissalida[0] == "Q"){
         ctx.strokeStyle="blue";
-        ctx.fillText(simb,475,127);
+        ctx.fillText(simb+'->'+localStorage["pilapass"],475,127);
       ctx.beginPath();
         ctx.moveTo(645,115);
         ctx.lineTo(355,115);
@@ -939,7 +992,7 @@
       // quadraticCurveTo(cp1x, cp1y, x, y) - Curva
       if(funcisentrada[0] == "P" && funcissalida[0] == "P"){
       ctx.strokeStyle="red";
-      ctx.fillText(simb,460,65);
+      ctx.fillText(simb+'->'+localStorage["pilapass"],460,65);
       ctx.beginPath();
         ctx.arc(480, 95, 25, 0, 120, true)
         ctx.stroke();
