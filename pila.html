@@ -144,7 +144,7 @@
       
       
 
-      objp.value+=localStorage["pila"]+","+pila+"\r\n";
+      // objp.value+=localStorage["pila"]+","+pila+"\r\n";
 
       var pilanueva = pila;
       localStorage["pilapass"] = pila;
@@ -159,38 +159,60 @@
 
       for (index = 0; index < simb.length; ++index) {
       var obj=document.getElementById("textarea1");
-      obj.value+=funcissalida+funcisentrada+simb[index]+"->"+localStorage["pilapass"]+"\r\n";
+      obj.value+=funcissalida+funcisentrada+simb[index]+"\r\n";
+
+      var objp=document.getElementById("textareapila");
+      objp.value+=localStorage["pilapass"]+"\r\n";
       }
 
       var stringArray = document.getElementById('textarea1').value.split('\n');
+      var stringArraypila = document.getElementById('textareapila').value.split('\n');
+      console.log(stringArraypila);
+
       var actual = init;
       var valortot = 0;
 
 
 
       // ciclo de revision de la cadena probando que el estado actual sea =
+      var pilaarray = ["~"];
       for (index2 = 0; index2 < chain.length; ++index2) {
         
         if (actual == "P"){
           if (stringArray.indexOf("PP"+chain[index2]) > -1){
             actual = "P";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
               if (stringArray.indexOf("PQ"+chain[index2]) > -1){
             actual = "Q";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("PR"+chain[index2]) > -1){
             actual = "R";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("PS"+chain[index2]) > -1){
             actual = "S";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("PT"+chain[index2]) > -1){
             actual = "T";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
 
         }
@@ -199,22 +221,37 @@
           if (stringArray.indexOf("QQ"+chain[index2]) > -1){
             actual = "Q";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("QP"+chain[index2]) > -1){
             actual = "P";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("QR"+chain[index2]) > -1){
             actual = "R";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("QS"+chain[index2]) > -1){
             actual = "S";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("QT"+chain[index2]) > -1){
             actual = "T";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
         }
 
@@ -222,22 +259,37 @@
           if (stringArray.indexOf("RR"+chain[index2]) > -1){
             actual = "R";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("RP"+chain[index2]) > -1){
             actual = "P";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("RQ"+chain[index2]) > -1){
             actual = "Q";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("RS"+chain[index2]) > -1){
             actual = "S";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("RT"+chain[index2]) > -1){
             actual = "T";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
         }
 
@@ -245,22 +297,37 @@
           if (stringArray.indexOf("SS"+chain[index2]) > -1){
             actual = "S";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("SP"+chain[index2]) > -1){
             actual = "P";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("SQ"+chain[index2]) > -1){
             actual = "Q";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("SR"+chain[index2]) > -1){
             actual = "R";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("ST"+chain[index2]) > -1){
             actual = "T";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
         }
 
@@ -268,29 +335,46 @@
           if (stringArray.indexOf("TT"+chain[index2]) > -1){
             actual = "P";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("TP"+chain[index2]) > -1){
             actual = "P";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("TQ"+chain[index2]) > -1){
             actual = "Q";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("TR"+chain[index2]) > -1){
             actual = "R";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
           if(stringArray.indexOf("TS"+chain[index2]) > -1){
             actual = "S";
             valortot++;
+            pilaarray.push(stringArraypila[index2]);
+            pilaarray.splice(0, 1);
+            alert("Tu Pila actual es: " + pilaarray);
           }
         }
 
         if ((valortot > index2) && (fin.indexOf(actual) > -1)) {
           alert("Tu cadena hasta " +chain[index2]+ " se ejecuto con exito!");
+          alert("Tu Pila final es: " + pilaarray);
         }else if (valortot < index2){
           alert("Tu cadena se detuvo en " +chain[index2]+ " ya no es posible continuar");
+          alert("Tu Pila fial es: " + pilaarray);
         }
       
       }
